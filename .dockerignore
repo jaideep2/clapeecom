@@ -1,0 +1,7 @@
+.vscode
+dist
+scripts
+.env
+.csv.template
+.txt
+.env.template
