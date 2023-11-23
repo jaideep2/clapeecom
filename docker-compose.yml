@@ -10,12 +10,12 @@ x-app-defaults: &app-defaults
         devices:
           - driver: nvidia
             count: 1
-            capabilities: [gpu]
+            capabilities: [gpu, video] # https://stackoverflow.com/a/75809584
 
 services:
-  vid2vid: #From https://github.com/ai-dock/comfyui
+  vid2vid:
     <<: *app-defaults
-    container_name: vid2vid
+    container_name: vid2vid-api
     image: ghcr.io/ai-dock/comfyui:latest-cuda
     volumes:
       - ./workspace:${WORKSPACE:-/workspace/}
@@ -35,3 +35,16 @@ services:
       - PROVISIONING_SCRIPT=${PROVISIONING_SCRIPT:-}
       - NODES_CSV_FILE=${NODES_CSV_FILE:-/opt/ai-dock/bin/nodes.csv}
       - MODELS_CSV_FILE=${MODELS_CSV_FILE:-/opt/ai-dock/bin/models.csv}
+
+  ffmpeg:
+    <<: *app-defaults
+    container_name: ffmpeg-api
+    image: craiggilchrist/ffmpeg-cuda:12.3
+    command: tail -F anything
+    volumes:
+      - ./workspace/ffmpeg:/config
+
+networks:
+  clapeecom:
+    name: clapeecom
+    driver: bridge
