@@ -22,6 +22,7 @@ services:
       - ./config/vid2vid/provisioning.sh:/opt/ai-dock/bin/provisioning.sh
       - ./config/vid2vid/models.csv:/opt/ai-dock/bin/models.csv
       - ./config/vid2vid/nodes.csv:/opt/ai-dock/bin/nodes.csv
+      - ./config/authorized_keys:/root/.ssh/authorized_keys_mount
     ports:
       - ${COMFYUI_PORT_HOST:-8188}:${COMFYUI_PORT:-8188}
     environment:
@@ -40,9 +41,10 @@ services:
     <<: *app-defaults
     container_name: ffmpeg-api
     image: craiggilchrist/ffmpeg-cuda:12.3
-    command: tail -F anything
+    command: tail -F keep_container_running
     volumes:
-      - ./workspace/ffmpeg:/config
+      - ./workspace/ffmpeg:/output
+      - ./config/authorized_keys:/root/.ssh/authorized_keys_mount
 
 networks:
   clapeecom:
